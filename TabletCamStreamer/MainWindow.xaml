@@ -1,0 +1,26 @@
+﻿<Window x:Class="TabletCamStreamer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TabletCamStreamer"
+        mc:Ignorable="d"
+        Title="CamStreamer" Height="500" Width="1000" Background="Black"
+        Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.9*"></RowDefinition>
+            <RowDefinition Height="0.1*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <local:CustomFrameViewer x:Name="ucFrameViewer" Grid.Row="0"></local:CustomFrameViewer>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.45*"></ColumnDefinition>
+                <ColumnDefinition Width="0.45*"></ColumnDefinition>
+                <ColumnDefinition Width="0.1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <ComboBox x:Name="cbCamSelection" Grid.Column="0" Background="Black" Margin="2 5 2 5" FontSize="18"></ComboBox>
+            <Button x:Name="btnStream" Grid.Column="2" Margin="2 2 2 2" Click="btnStream_Click">Start Stream</Button>
+        </Grid>
+    </Grid>
+</Window>
