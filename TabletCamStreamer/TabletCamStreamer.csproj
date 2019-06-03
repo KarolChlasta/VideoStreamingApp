@@ -37,22 +37,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DirectShowLib-2005">
-      <HintPath>..\..\MyVideoRecorder\MyRecordingApp\Libraries\DirectShowLib-2005.dll</HintPath>
+      <HintPath>Libraries\DirectShowLib-2005.dll</HintPath>
     </Reference>
     <Reference Include="Emgu.CV.DebuggerVisualizers.VS2015">
-      <HintPath>..\..\MyVideoRecorder\MyRecordingApp\Libraries\Emgu.CV.DebuggerVisualizers.VS2015.dll</HintPath>
+      <HintPath>Libraries\Emgu.CV.DebuggerVisualizers.VS2015.dll</HintPath>
     </Reference>
     <Reference Include="Emgu.CV.UI">
-      <HintPath>..\..\MyVideoRecorder\MyRecordingApp\Libraries\Emgu.CV.UI.dll</HintPath>
+      <HintPath>Libraries\Emgu.CV.UI.dll</HintPath>
     </Reference>
     <Reference Include="Emgu.CV.UI.GL">
-      <HintPath>..\..\MyVideoRecorder\MyRecordingApp\Libraries\Emgu.CV.UI.GL.dll</HintPath>
+      <HintPath>Libraries\Emgu.CV.UI.GL.dll</HintPath>
     </Reference>
     <Reference Include="Emgu.CV.World">
-      <HintPath>..\..\MyVideoRecorder\MyRecordingApp\Libraries\Emgu.CV.World.dll</HintPath>
-    </Reference>
-    <Reference Include="QuadrilateralDistortion">
-      <HintPath>..\..\MyVideoRecorder\MyRecordingApp\Libraries\QuadrilateralDistortion.dll</HintPath>
+      <HintPath>Libraries\Emgu.CV.World.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -71,7 +68,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="ZedGraph">
-      <HintPath>..\..\MyVideoRecorder\MyRecordingApp\Libraries\ZedGraph.dll</HintPath>
+      <HintPath>Libraries\ZedGraph.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
