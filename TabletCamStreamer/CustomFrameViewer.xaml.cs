@@ -172,7 +172,7 @@ namespace TabletCamStreamer
             }
             if(cropCornerBrush == null)
             {
-                cropCornerBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Yellow);
+                cropCornerBrush = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(100,255,255,0));
             }
             using (Graphics g = Graphics.FromImage(src))
             {
@@ -210,7 +210,10 @@ namespace TabletCamStreamer
             if(_beingSelectedCorner != null)
             {
                 BitmapImage bmpSource = (BitmapImage)imFramePreview.Source;
-                _beingSelectedCorner.setPosition(mousePosOnBitmap.X, mousePosOnBitmap.Y, bmpSource.PixelWidth, bmpSource.PixelHeight);
+                int difX = mousePosOnBitmap.X - prevMousePos.X;
+                int difY = mousePosOnBitmap.Y - prevMousePos.Y;
+                _beingSelectedCorner.setPosition(_beingSelectedCorner.AbsX + difX, _beingSelectedCorner.AbsY + difY, bmpSource.PixelWidth, bmpSource.PixelHeight);
+                prevMousePos = mousePosOnBitmap;
             }
         }
 

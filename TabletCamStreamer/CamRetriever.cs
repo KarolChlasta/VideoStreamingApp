@@ -103,7 +103,7 @@ namespace TabletCamStreamer
                 try
                 {
                     camCapture.Retrieve(originFrame, 0);
-                    CvInvoke.Flip(originFrame, originFrame, Emgu.CV.CvEnum.FlipType.Horizontal);
+                    //CvInvoke.Flip(originFrame, originFrame, Emgu.CV.CvEnum.FlipType.Horizontal);
                     
                     if(_roiExtractor != null)
                     {

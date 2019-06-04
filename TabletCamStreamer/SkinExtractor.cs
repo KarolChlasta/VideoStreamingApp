@@ -11,10 +11,14 @@ namespace TabletCamStreamer
     public class SkinExtractor
     {
         //Hsv skinLowLimit = new Hsv(0, 48, 80);
-        Hsv hsvLowLimit1 = new Hsv(0, 40, 60);
-        Hsv hsvUpLimit1 = new Hsv(30, 220, 220);
+        Hsv hsvLowBound = new Hsv(0, 0, 0);
+        Hsv hsvUpBound = new Hsv(55, 255, 255);
+        Ycc yccLowBound = new Ycc(5, 123, 60);
+        Ycc yccUpBound = new Ycc(255, 180, 120); 
         Image<Bgra, byte> extraction = null;
         Image<Gray, byte> skinMask = null;
+        Mat dilateElm = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new System.Drawing.Size(3, 3), new System.Drawing.Point(-1, -1));
+        Mat erodeElm = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new System.Drawing.Size(3, 3), new System.Drawing.Point(-1, -1));
         public SkinExtractor()
         {
         }
@@ -24,10 +28,13 @@ namespace TabletCamStreamer
             Image<Hsv, byte> hsvSrc = rgbaSrc.Convert<Hsv, byte>();
             Image<Ycc, byte> yccSrc = rgbaSrc.Convert<Ycc, byte>();
             InitMatsIfNeeded(rgbaSrc);
-            skinMask = hsvSrc.InRange(hsvLowLimit1, hsvUpLimit1);
-            skinMask = skinMask.Dilate(2);
-            skinMask = skinMask.Erode(2);
-            CvInvoke.GaussianBlur(skinMask, skinMask, new System.Drawing.Size(3, 3), 1, 1);
+            skinMask = hsvSrc.InRange(hsvLowBound, hsvUpBound);
+            //skinMask = yccSrc.InRange(yccLowBound, yccUpBound);
+            //skinMask = skinMask.Dilate(1);
+            CvInvoke.Dilate(skinMask, skinMask, dilateElm, new System.Drawing.Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar());
+            CvInvoke.Erode(skinMask, skinMask, erodeElm, new System.Drawing.Point(-1, -1), 2, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar());
+            //skinMask = skinMask.Erode(1);
+            CvInvoke.GaussianBlur(skinMask, skinMask, new System.Drawing.Size(5, 5), 1, 1);
             extraction.SetValue(new Bgra(0, 0, 0, 0));
             rgbaSrc.Copy(extraction, skinMask);
             return extraction.Mat;
