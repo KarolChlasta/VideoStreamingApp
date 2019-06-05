@@ -12,7 +12,7 @@ namespace TabletCamStreamer
     public delegate void NewFrameAvailableHandler(object sender, Bitmap frameData);
     public class CamRetriever
     {
-        const int UPDATE_INTERVAL = 50;
+        const int UPDATE_INTERVAL = 40;
         public event NewFrameAvailableHandler NewFrameAvailableEvent;
         protected VideoCapture camCapture;
         private DateTime lastUpdate;
@@ -71,7 +71,7 @@ namespace TabletCamStreamer
                 }
                 if (frameHeight > 0)
                 {
-                    camCapture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, frameHeight);
+                    bool res = camCapture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, frameHeight);
                 }
                 if (camCapture != null && camCapture.Ptr != IntPtr.Zero)
                 {

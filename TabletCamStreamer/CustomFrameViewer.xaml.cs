@@ -39,8 +39,8 @@ namespace TabletCamStreamer
         int curCamIndex = 0;
         CropCorner[] cropCorners = null;
         CropCorner _beingSelectedCorner = null;
-        const int initFrameWidth = 1280;
-        const int initFrameHeight = 720;
+        const int initFrameWidth = 640;
+        const int initFrameHeight = 480;
         const int initDstFrameW = 100;
         const int initDstFrameH = 150;
         ViewerMode curMode;
@@ -141,7 +141,8 @@ namespace TabletCamStreamer
         {
             _mainCamRetriever?.Close();
             int camIndex = curCamIndex >= 0 ? curCamIndex : 0;
-            _mainCamRetriever = new CamRetriever(camIndex, 1280, 720);
+            //_mainCamRetriever = new CamRetriever(camIndex, 1280, 720);
+            _mainCamRetriever = new CamRetriever(camIndex, initFrameWidth, initFrameHeight);
             _mainCamRetriever.NewFrameAvailableEvent += MainCamRetriever_NewFrameAvailableEvent;
             _mainCamRetriever.Start();
         }

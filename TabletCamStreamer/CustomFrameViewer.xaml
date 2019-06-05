@@ -13,6 +13,7 @@
             <RowDefinition Height="0.1*"></RowDefinition>
         </Grid.RowDefinitions>
         <Image x:Name="imFramePreview" Grid.Row="0"
+               Stretch="Uniform"
                MouseLeftButtonDown="imFramePreview_MouseLeftButtonDown"
                MouseMove="imFramePreview_MouseMove"
                MouseLeftButtonUp="imFramePreview_MouseLeftButtonUp"/>
