@@ -1,5 +1,6 @@
 ﻿using DirectShowLib;
 using Emgu.CV;
+using Emgu.CV.Structure;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,6 +13,7 @@ namespace TabletCamStreamer
     public delegate void NewFrameAvailableHandler(object sender, Bitmap frameData);
     public class CamRetriever
     {
+        public enum FrameFlipType{None,Horizontal,Vertical,Both}
         const int UPDATE_INTERVAL = 40;
         public event NewFrameAvailableHandler NewFrameAvailableEvent;
         protected VideoCapture camCapture;
@@ -24,6 +26,9 @@ namespace TabletCamStreamer
         public RectangleF CropArea { get; set; }
         ImageROIExtractor _roiExtractor = null;
         SkinExtractor _skinExtractor = null;
+        FrameFlipType _flipType;
+        double _rotationAngle = 0;
+        Size _actualFrameSize;
         public ImageROIExtractor RoiExtractor
         {
             get
@@ -50,14 +55,21 @@ namespace TabletCamStreamer
             }
         }
 
+        public FrameFlipType FlipType { get => _flipType; set => _flipType = value; }
+
+        public double RotationAngle { get => _rotationAngle; set => _rotationAngle = value; }
+        public Size ActualFrameSize { get => _actualFrameSize; set => _actualFrameSize = value; }
+
         public CamRetriever(int camIndex, int frameW = 0, int frameH = 0)
         {
             CamIndex = camIndex;
             lastUpdate = DateTime.Now;
-            frameWidth = frameW;
-            frameHeight = frameH;
+            frameWidth = frameW>0?frameW:frameWidth;
+            frameHeight = frameH>0?frameH:frameHeight;
             CropArea = new RectangleF(0.4f, 0.4f, 0.1f, 0.25f);
+            _flipType = FrameFlipType.None;
             //CropArea = new RectangleF(0,0,1,1);
+            ActualFrameSize = new Size(frameWidth,frameHeight);
         }
         public void Start()
         {
@@ -91,7 +103,9 @@ namespace TabletCamStreamer
             }
         }
         Mat originFrame = new Mat();
+        Mat preprocessedFrame;
         Mat extractedFrame;
+        Image<Bgra, byte> originImg;
         private void ProcessFrame(object sender, EventArgs arg)
         {
             if (camCapture != null && camCapture.Ptr != IntPtr.Zero)
@@ -103,11 +117,32 @@ namespace TabletCamStreamer
                 try
                 {
                     camCapture.Retrieve(originFrame, 0);
-                    //CvInvoke.Flip(originFrame, originFrame, Emgu.CV.CvEnum.FlipType.Horizontal);
-                    
+                    originImg = originFrame.ToImage<Bgra, byte>();
+                    if(_rotationAngle != 0)
+                    {
+                        originImg = originImg.Rotate(_rotationAngle, new Bgra(0, 0, 0, 1),false);
+                    }
+                    preprocessedFrame = originImg.Mat;
+                    if (_flipType != FrameFlipType.None)
+                    {
+                        if (_flipType == FrameFlipType.Horizontal)
+                        {
+                            CvInvoke.Flip(preprocessedFrame, preprocessedFrame, Emgu.CV.CvEnum.FlipType.Horizontal);
+                        }
+                        else if (_flipType == FrameFlipType.Vertical)
+                        {
+                            CvInvoke.Flip(preprocessedFrame, preprocessedFrame, Emgu.CV.CvEnum.FlipType.Vertical);
+                        }
+                        else if (_flipType == FrameFlipType.Both)
+                        {
+                            CvInvoke.Flip(preprocessedFrame, preprocessedFrame, Emgu.CV.CvEnum.FlipType.Horizontal);
+                            CvInvoke.Flip(preprocessedFrame, preprocessedFrame, Emgu.CV.CvEnum.FlipType.Vertical);
+                        }
+                    }
+                    ActualFrameSize = new Size(preprocessedFrame.Width, preprocessedFrame.Height);
                     if(_roiExtractor != null)
                     {
-                        extractedFrame = _roiExtractor.extractROI(originFrame);
+                        extractedFrame = _roiExtractor.extractROI(preprocessedFrame);
                         if(_skinExtractor != null)
                         {
                             extractedFrame = _skinExtractor.extractSkinPart(extractedFrame);
@@ -115,7 +150,7 @@ namespace TabletCamStreamer
                     }
                     else
                     {
-                        extractedFrame = originFrame.Clone();
+                        extractedFrame = preprocessedFrame.Clone();
                     }
                     Bitmap bmp = extractedFrame.Bitmap;
                     /*if (CropArea != null)

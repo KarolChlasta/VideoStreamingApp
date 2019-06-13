@@ -33,6 +33,62 @@ namespace TabletCamStreamer
             {
                 cbCamSelection.SelectedIndex = 0;
             }
+
+            cbFrameFlip.SelectionChanged += CbFrameFlip_SelectionChanged;
+            cbFrameFlip.ItemsSource = getFlipTypes();
+            cbFrameFlip.SelectedIndex = 0;
+
+            cbFrameRotate.ItemsSource = getRotationTypes();
+            cbFrameRotate.SelectionChanged += CbFrameRotate_SelectionChanged;
+            cbFrameRotate.SelectedIndex = 0;
+        }
+
+        string[] getFlipTypes()
+        {
+            return new string[] { "None","Horizontal","Vertical","Both"};
+        }
+        string[] getRotationTypes()
+        {
+            return new string[] { "None", "90 CW", "90 CCW", "180" };
+        }
+
+        private void CbFrameFlip_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(cbFrameFlip.SelectedIndex == 0)
+            {
+                ucFrameViewer.setFrameFlip(CamRetriever.FrameFlipType.None);
+            }
+            else if(cbFrameFlip.SelectedIndex == 1)
+            {
+                ucFrameViewer.setFrameFlip(CamRetriever.FrameFlipType.Horizontal);
+            }
+            else if(cbFrameFlip.SelectedIndex == 2)
+            {
+                ucFrameViewer.setFrameFlip(CamRetriever.FrameFlipType.Vertical);
+            }
+            else if(cbFrameFlip.SelectedIndex == 3)
+            {
+                ucFrameViewer.setFrameFlip(CamRetriever.FrameFlipType.Both);
+            }
+        }
+        private void CbFrameRotate_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(cbFrameRotate.SelectedIndex == 0)
+            {
+                ucFrameViewer.setFrameRotation(0);
+            }
+            else if(cbFrameRotate.SelectedIndex == 1)
+            {
+                ucFrameViewer.setFrameRotation(90);
+            }
+            else if (cbFrameRotate.SelectedIndex == 2)
+            {
+                ucFrameViewer.setFrameRotation(-90);
+            }
+            else if (cbFrameRotate.SelectedIndex == 3)
+            {
+                ucFrameViewer.setFrameRotation(180);
+            }
         }
         private void CbCamSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

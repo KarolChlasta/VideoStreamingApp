@@ -15,12 +15,15 @@
         <local:CustomFrameViewer x:Name="ucFrameViewer" Grid.Row="0"></local:CustomFrameViewer>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.45*"></ColumnDefinition>
-                <ColumnDefinition Width="0.45*"></ColumnDefinition>
+                <ColumnDefinition Width="0.3*"></ColumnDefinition>
+                <ColumnDefinition Width="0.3*"></ColumnDefinition>
+                <ColumnDefinition Width="0.3*"></ColumnDefinition>
                 <ColumnDefinition Width="0.1*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <ComboBox x:Name="cbCamSelection" Grid.Column="0" Background="Black" Margin="2 5 2 5" FontSize="18"></ComboBox>
-            <Button x:Name="btnStream" Grid.Column="2" Margin="2 2 2 2" Click="btnStream_Click">Start Stream</Button>
+            <ComboBox x:Name="cbCamSelection" Grid.Column="0" Background="Black" Margin="2 5 2 5" FontSize="14"></ComboBox>
+            <ComboBox x:Name="cbFrameFlip" Grid.Column="1" Background="Black" Margin="2 5 2 5" FontSize="14"></ComboBox>
+            <ComboBox x:Name="cbFrameRotate" Grid.Column="2" Background="Black" Margin="2 5 2 5" FontSize="14"></ComboBox>
+            <Button x:Name="btnStream" Grid.Column="3" Margin="2 2 2 2" Click="btnStream_Click">Start Stream</Button>
         </Grid>
     </Grid>
 </Window>

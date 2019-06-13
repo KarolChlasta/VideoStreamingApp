@@ -40,7 +40,7 @@ namespace TabletCamStreamer
         CropCorner[] cropCorners = null;
         CropCorner _beingSelectedCorner = null;
         const int initFrameWidth = 640;
-        const int initFrameHeight = 480;
+        const int initFrameHeight = 360;
         const int initDstFrameW = 100;
         const int initDstFrameH = 150;
         ViewerMode curMode;
@@ -62,13 +62,13 @@ namespace TabletCamStreamer
             {
                 cropCorners = new CropCorner[4];
                 cropCorners[0] = new CropCorner("TopLeft");
-                cropCorners[0].setPosition(0, 0, initFrameWidth, initFrameHeight);
+                cropCorners[0].setPosition(0, 0, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
                 cropCorners[1] = new CropCorner("TopRight");
-                cropCorners[1].setPosition(initFrameWidth, 0, initFrameWidth, initFrameHeight);
+                cropCorners[1].setPosition(_mainCamRetriever.ActualFrameSize.Width, 0, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
                 cropCorners[2] = new CropCorner("BottomRight");
-                cropCorners[2].setPosition(initFrameWidth, initFrameHeight, initFrameWidth, initFrameHeight);
+                cropCorners[2].setPosition(_mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
                 cropCorners[3] = new CropCorner("BottomLeft");
-                cropCorners[3].setPosition(0, initFrameHeight, initFrameWidth, initFrameHeight);
+                cropCorners[3].setPosition(0, _mainCamRetriever.ActualFrameSize.Height, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
             }
         }
 
@@ -160,6 +160,20 @@ namespace TabletCamStreamer
         {
             _mainCamRetriever?.Close();
             _mainCamRetriever = null;
+        }
+        public void setFrameFlip(CamRetriever.FrameFlipType flipType)
+        {
+            if (_mainCamRetriever != null)
+            {
+                _mainCamRetriever.FlipType = flipType;
+            }
+        }
+        public void setFrameRotation(double rotAngleInDegree)
+        {
+            if(_mainCamRetriever != null)
+            {
+                _mainCamRetriever.RotationAngle = rotAngleInDegree;
+            }
         }
         #region process crop area
         System.Drawing.Pen cropLinePen = null;
