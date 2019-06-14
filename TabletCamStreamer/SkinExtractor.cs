@@ -15,8 +15,8 @@ namespace TabletCamStreamer
         Hsv chromakeyLow = new Hsv(60,50,0);
         Hsv chromakeyUp = new Hsv(180,255,255);
 
-        Hsv hsvLowBound = new Hsv(0, 40, 80);
-        Hsv hsvUpBound = new Hsv(25, 255, 255);
+        Hsv hsvLowBound = new Hsv(0, 35, 30);
+        Hsv hsvUpBound = new Hsv(30, 255, 255);
 
         Ycc yccLowBound = new Ycc(5, 123, 60);
         Ycc yccUpBound = new Ycc(255, 180, 120); 
@@ -38,7 +38,7 @@ namespace TabletCamStreamer
         {
             Image<Bgra, byte> rgbaSrc = srcImg.ToImage<Bgra, byte>();
             Image<Hsv, byte> hsvSrc = rgbaSrc.Convert<Hsv, byte>();
-            if(sampleFrameCount < SAMPLE_SIZE)
+            /*if(sampleFrameCount < SAMPLE_SIZE)
             {
                 Hsv frameAvg;
                 MCvScalar frameSdv;
@@ -70,7 +70,7 @@ namespace TabletCamStreamer
                     meanSdv.V2 /= sampleFrameCount;
                     meanSdv.V3 /= sampleFrameCount;
 
-                    double multitudeFactor = 3.5;
+                    double multitudeFactor = 5;
                     chromakeyLow.Hue = meanFrameColor.Hue - meanSdv.V0 * multitudeFactor;
                     chromakeyLow.Satuation = meanFrameColor.Satuation - meanSdv.V1 * multitudeFactor;
                     chromakeyLow.Value = meanFrameColor.Value - meanSdv.V2 * multitudeFactor;
@@ -79,11 +79,12 @@ namespace TabletCamStreamer
                     chromakeyUp.Satuation = meanFrameColor.Satuation + meanSdv.V1 * multitudeFactor;
                     chromakeyUp.Value = meanFrameColor.Value + meanSdv.V2 * multitudeFactor;
                 }
-            }
+            }*/
             Image<Ycc, byte> yccSrc = rgbaSrc.Convert<Ycc, byte>();
             InitMatsIfNeeded(rgbaSrc);
-            skinMask = hsvSrc.InRange(chromakeyLow, chromakeyUp);
-            skinMask = skinMask.Not();
+            //skinMask = hsvSrc.InRange(chromakeyLow, chromakeyUp);
+            skinMask = hsvSrc.InRange(hsvLowBound, hsvUpBound);
+            //skinMask = skinMask.Not();
             //skinMask = yccSrc.InRange(yccLowBound, yccUpBound);
             //skinMask = skinMask.Dilate(1);
             CvInvoke.Dilate(skinMask, skinMask, dilateElm, new System.Drawing.Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar());
