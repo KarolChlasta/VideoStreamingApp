@@ -53,6 +53,19 @@ namespace TabletCamStreamer
         }
 
         ImageROIExtractor prevROIExtractor;
+        private CropCorner[] initCropCorners()
+        {
+            CropCorner[] corners = new CropCorner[4];
+            corners[0] = new CropCorner("TopLeft");
+            corners[0].setPosition(0, 0, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
+            corners[1] = new CropCorner("TopRight");
+            corners[1].setPosition(_mainCamRetriever.ActualFrameSize.Width, 0, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
+            corners[2] = new CropCorner("BottomRight");
+            corners[2].setPosition(_mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
+            corners[3] = new CropCorner("BottomLeft");
+            corners[3].setPosition(0, _mainCamRetriever.ActualFrameSize.Height, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
+            return corners;
+        }
         private void btnCalib_Click(object sender, RoutedEventArgs e)
         {
             switchMode(ViewerMode.CALIBRATE);
@@ -60,7 +73,7 @@ namespace TabletCamStreamer
             _mainCamRetriever.RoiExtractor = null;
             if(cropCorners == null)
             {
-                cropCorners = new CropCorner[4];
+                /*cropCorners = new CropCorner[4];
                 cropCorners[0] = new CropCorner("TopLeft");
                 cropCorners[0].setPosition(0, 0, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
                 cropCorners[1] = new CropCorner("TopRight");
@@ -68,7 +81,8 @@ namespace TabletCamStreamer
                 cropCorners[2] = new CropCorner("BottomRight");
                 cropCorners[2].setPosition(_mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
                 cropCorners[3] = new CropCorner("BottomLeft");
-                cropCorners[3].setPosition(0, _mainCamRetriever.ActualFrameSize.Height, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
+                cropCorners[3].setPosition(0, _mainCamRetriever.ActualFrameSize.Height, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);*/
+                cropCorners = initCropCorners();
             }
         }
 
@@ -101,6 +115,10 @@ namespace TabletCamStreamer
             _mainCamRetriever.RoiExtractor = prevROIExtractor;
             switchMode(ViewerMode.NORMAL);
         }
+        private void btnResetCrop_Click(object sender, RoutedEventArgs e)
+        {
+            cropCorners = initCropCorners();
+        }
         void switchMode(ViewerMode mode)
         {
             if(mode == ViewerMode.CALIBRATE)
@@ -108,6 +126,7 @@ namespace TabletCamStreamer
                 btnCalib.Visibility = Visibility.Hidden;
                 btnOk.Visibility = Visibility.Visible;
                 btnCancel.Visibility = Visibility.Visible;
+                btnResetCrop.Visibility = Visibility.Visible;
                 tbDstWidth.IsEnabled = true;
                 tbDstHeight.IsEnabled = true;
             }
@@ -116,6 +135,7 @@ namespace TabletCamStreamer
                 btnCalib.Visibility = Visibility.Visible;
                 btnOk.Visibility = Visibility.Hidden;
                 btnCancel.Visibility = Visibility.Hidden;
+                btnResetCrop.Visibility = Visibility.Hidden;
                 tbDstWidth.IsEnabled = false;
                 tbDstHeight.IsEnabled = false;
             }
