@@ -36,6 +36,7 @@ namespace TabletCamStreamer
                 _mainCamRetriever = value;
             }
         }
+        private SkinExtractor skinExtractor;
         int curCamIndex = 0;
         CropCorner[] cropCorners = null;
         CropCorner _beingSelectedCorner = null;
@@ -50,6 +51,10 @@ namespace TabletCamStreamer
             InitializeComponent();
             switchMode(ViewerMode.NORMAL);
             startMainCam();
+            skinExtractor = new SkinExtractor();
+            skinExtractor.initSkinBoundaris(hueSlider.RangeStartSelected, hueSlider.RangeStopSelected,
+                                            satSlider.RangeStartSelected, satSlider.RangeStopSelected,
+                                            valSlider.RangeStartSelected, valSlider.RangeStopSelected);
         }
 
         ImageROIExtractor prevROIExtractor;
@@ -107,7 +112,7 @@ namespace TabletCamStreamer
                 relROICorners[i] = new PointF(cropCorners[i].RelX, cropCorners[i].RelY);
             }
             _mainCamRetriever.RoiExtractor.setExtractionParams(relROICorners, curFrame.PixelWidth, curFrame.PixelHeight, dstW, dstH);
-            _mainCamRetriever.SkinExtractor = new SkinExtractor();
+            //_mainCamRetriever.SkinExtractor = new SkinExtractor();
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
@@ -115,10 +120,12 @@ namespace TabletCamStreamer
             _mainCamRetriever.RoiExtractor = prevROIExtractor;
             switchMode(ViewerMode.NORMAL);
         }
+
         private void btnResetCrop_Click(object sender, RoutedEventArgs e)
         {
             cropCorners = initCropCorners();
         }
+
         void switchMode(ViewerMode mode)
         {
             if(mode == ViewerMode.CALIBRATE)
@@ -141,6 +148,7 @@ namespace TabletCamStreamer
             }
             curMode = mode;
         }
+
         public void showVideoFrame(Bitmap frameBmp)
         {
             
@@ -152,11 +160,13 @@ namespace TabletCamStreamer
             };
             imFramePreview.Dispatcher.Invoke(displayaction);
         }
+
         public void changeCamera(int camIndex)
         {
             curCamIndex = camIndex;
             startMainCam();
         }
+
         void startMainCam()
         {
             _mainCamRetriever?.Close();
@@ -164,6 +174,7 @@ namespace TabletCamStreamer
             //_mainCamRetriever = new CamRetriever(camIndex, 1280, 720);
             _mainCamRetriever = new CamRetriever(camIndex, initFrameWidth, initFrameHeight);
             _mainCamRetriever.NewFrameAvailableEvent += MainCamRetriever_NewFrameAvailableEvent;
+            _mainCamRetriever.SkinExtractor = skinExtractor;
             _mainCamRetriever.Start();
         }
 
@@ -264,8 +275,55 @@ namespace TabletCamStreamer
             posOnBitmap.Y = (int)(e.GetPosition(imFramePreview).Y * bmpSource.PixelHeight / imFramePreview.ActualHeight);
             return posOnBitmap;
         }
+
         #endregion
 
+        #region image processing control
+        private void hueSlider_RangeSelectionChanged(object sender, AC.AvalonControlsLibrary.Controls.RangeSelectionChangedEventArgs e)
+        {
+            string rangeText = string.Format("From {0} to {1}", e.NewRangeStart, e.NewRangeStop);
+            lblhueSliderRange.Content = rangeText;
+            if(skinExtractor != null)
+            {
+                skinExtractor.LowerSkinHue = e.NewRangeStart;
+                skinExtractor.UpperSkinHue = e.NewRangeStop;
+            }
+        }
 
+        private void SatSlider_RangeSelectionChanged(object sender, AC.AvalonControlsLibrary.Controls.RangeSelectionChangedEventArgs e)
+        {
+            string rangeText = string.Format("From {0} to {1}", e.NewRangeStart, e.NewRangeStop);
+            lblSatSliderRange.Content = rangeText;
+            if (skinExtractor != null)
+            {
+                skinExtractor.LowerSkinSaturation = e.NewRangeStart;
+                skinExtractor.UpperSkinSaturation = e.NewRangeStop;
+            }
+        }
+
+        private void ValSlider_RangeSelectionChanged(object sender, AC.AvalonControlsLibrary.Controls.RangeSelectionChangedEventArgs e)
+        {
+            string rangeText = string.Format("From {0} to {1}", e.NewRangeStart, e.NewRangeStop);
+            lblValSliderRange.Content = rangeText;
+            if (skinExtractor != null)
+            {
+                skinExtractor.LowerSkinValue = e.NewRangeStart;
+                skinExtractor.UpperSkinValue = e.NewRangeStop;
+            }
+        }
+
+        private void CbEnableImgProc_CheckChanged(object sender, RoutedEventArgs e)
+        {
+            CamRetriever.SkinSegmentEnabled = cbEnableImgProc.IsChecked.HasValue? cbEnableImgProc.IsChecked.Value:false;
+            if(CamRetriever.SkinSegmentEnabled)
+            {
+                imgProcDisabler.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                imgProcDisabler.Visibility = Visibility.Visible;
+            }
+        }
+        #endregion
     }
 }

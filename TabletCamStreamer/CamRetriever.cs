@@ -29,6 +29,7 @@ namespace TabletCamStreamer
         FrameFlipType _flipType;
         double _rotationAngle = 0;
         Size _actualFrameSize;
+        static public bool SkinSegmentEnabled = false;
         public ImageROIExtractor RoiExtractor
         {
             get
@@ -70,6 +71,7 @@ namespace TabletCamStreamer
             _flipType = FrameFlipType.None;
             //CropArea = new RectangleF(0,0,1,1);
             ActualFrameSize = new Size(frameWidth,frameHeight);
+            
         }
         public void Start()
         {
@@ -143,14 +145,17 @@ namespace TabletCamStreamer
                     if(_roiExtractor != null)
                     {
                         extractedFrame = _roiExtractor.extractROI(preprocessedFrame);
-                        if(_skinExtractor != null)
-                        {
-                            extractedFrame = _skinExtractor.extractSkinPart(extractedFrame);
-                        }
                     }
                     else
                     {
                         extractedFrame = preprocessedFrame.Clone();
+                    }
+                    if (SkinSegmentEnabled)
+                    {
+                        if (_skinExtractor != null)
+                        {
+                            extractedFrame = _skinExtractor.extractSkinPart(extractedFrame);
+                        }
                     }
                     Bitmap bmp = extractedFrame.Bitmap;
                     /*if (CropArea != null)

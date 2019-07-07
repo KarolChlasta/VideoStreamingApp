@@ -45,11 +45,11 @@ namespace TabletCamStreamer
 
         string[] getFlipTypes()
         {
-            return new string[] { "None","Horizontal","Vertical","Both"};
+            return new string[] { "Choose Flip Types","Horizontal","Vertical","Both"};
         }
         string[] getRotationTypes()
         {
-            return new string[] { "None", "90 CW", "90 CCW", "180" };
+            return new string[] { "Choose Rotate Types", "90 CW", "90 CCW", "180" };
         }
 
         private void CbFrameFlip_SelectionChanged(object sender, SelectionChangedEventArgs e)
