@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TabletCamStreamer"
         mc:Ignorable="d"
-        Title="CamStreamer" Height="500" Width="1000" Background="Black"
+        Title="CamStreamer" Height="700" Width="1200" Background="Black"
         Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.9*"></RowDefinition>
-            <RowDefinition Height="0.1*"></RowDefinition>
+            <RowDefinition Height="0.95*"></RowDefinition>
+            <RowDefinition Height="0.05*"></RowDefinition>
         </Grid.RowDefinitions>
         <local:CustomFrameViewer x:Name="ucFrameViewer" Grid.Row="0"></local:CustomFrameViewer>
         <Grid Grid.Row="1">

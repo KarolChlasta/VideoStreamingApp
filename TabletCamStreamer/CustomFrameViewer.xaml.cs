@@ -52,9 +52,10 @@ namespace TabletCamStreamer
             switchMode(ViewerMode.NORMAL);
             startMainCam();
             skinExtractor = new SkinExtractor();
-            skinExtractor.initSkinBoundaris(hueSlider.RangeStartSelected, hueSlider.RangeStopSelected,
+            skinExtractor.initSegmentationColorBoundaries(hueSlider.RangeStartSelected, hueSlider.RangeStopSelected,
                                             satSlider.RangeStartSelected, satSlider.RangeStopSelected,
                                             valSlider.RangeStartSelected, valSlider.RangeStopSelected);
+            updateSegmentationColorsLabels();
         }
 
         ImageROIExtractor prevROIExtractor;
@@ -77,16 +78,7 @@ namespace TabletCamStreamer
             prevROIExtractor = _mainCamRetriever.RoiExtractor;
             _mainCamRetriever.RoiExtractor = null;
             if(cropCorners == null)
-            {
-                /*cropCorners = new CropCorner[4];
-                cropCorners[0] = new CropCorner("TopLeft");
-                cropCorners[0].setPosition(0, 0, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
-                cropCorners[1] = new CropCorner("TopRight");
-                cropCorners[1].setPosition(_mainCamRetriever.ActualFrameSize.Width, 0, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
-                cropCorners[2] = new CropCorner("BottomRight");
-                cropCorners[2].setPosition(_mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);
-                cropCorners[3] = new CropCorner("BottomLeft");
-                cropCorners[3].setPosition(0, _mainCamRetriever.ActualFrameSize.Height, _mainCamRetriever.ActualFrameSize.Width, _mainCamRetriever.ActualFrameSize.Height);*/
+            { 
                 cropCorners = initCropCorners();
             }
         }
@@ -132,6 +124,7 @@ namespace TabletCamStreamer
             {
                 btnCalib.Visibility = Visibility.Hidden;
                 btnOk.Visibility = Visibility.Visible;
+                btnOk.Focus();
                 btnCancel.Visibility = Visibility.Visible;
                 btnResetCrop.Visibility = Visibility.Visible;
                 tbDstWidth.IsEnabled = true;
@@ -279,14 +272,23 @@ namespace TabletCamStreamer
         #endregion
 
         #region image processing control
+        void updateSegmentationColorsLabels()
+        {
+            string hueRangeText = string.Format("From {0} to {1}", hueSlider.RangeStartSelected, hueSlider.RangeStopSelected);
+            lblhueSliderRange.Content = hueRangeText;
+            string satRangeText = string.Format("From {0} to {1}", satSlider.RangeStartSelected, satSlider.RangeStopSelected);
+            lblSatSliderRange.Content = satRangeText;
+            string valRangeText = string.Format("From {0} to {1}", valSlider.RangeStartSelected, valSlider.RangeStopSelected);
+            lblValSliderRange.Content = valRangeText;
+        }
         private void hueSlider_RangeSelectionChanged(object sender, AC.AvalonControlsLibrary.Controls.RangeSelectionChangedEventArgs e)
         {
             string rangeText = string.Format("From {0} to {1}", e.NewRangeStart, e.NewRangeStop);
             lblhueSliderRange.Content = rangeText;
             if(skinExtractor != null)
             {
-                skinExtractor.LowerSkinHue = e.NewRangeStart;
-                skinExtractor.UpperSkinHue = e.NewRangeStop;
+                skinExtractor.LowerHue = e.NewRangeStart;
+                skinExtractor.UpperHue = e.NewRangeStop;
             }
         }
 
@@ -296,8 +298,8 @@ namespace TabletCamStreamer
             lblSatSliderRange.Content = rangeText;
             if (skinExtractor != null)
             {
-                skinExtractor.LowerSkinSaturation = e.NewRangeStart;
-                skinExtractor.UpperSkinSaturation = e.NewRangeStop;
+                skinExtractor.LowerSaturation = e.NewRangeStart;
+                skinExtractor.UpperSaturation = e.NewRangeStop;
             }
         }
 
@@ -307,8 +309,8 @@ namespace TabletCamStreamer
             lblValSliderRange.Content = rangeText;
             if (skinExtractor != null)
             {
-                skinExtractor.LowerSkinValue = e.NewRangeStart;
-                skinExtractor.UpperSkinValue = e.NewRangeStop;
+                skinExtractor.LowerValue = e.NewRangeStart;
+                skinExtractor.UpperValue = e.NewRangeStop;
             }
         }
 

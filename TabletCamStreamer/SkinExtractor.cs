@@ -10,8 +10,8 @@ namespace TabletCamStreamer
         Hsv chromakeyLow = new Hsv(60,50,0);
         Hsv chromakeyUp = new Hsv(180,255,255);
 
-        Hsv _hsvSkinLowBound = new Hsv(0, 35, 30);
-        Hsv _hsvSkinUpBound = new Hsv(30, 255, 255);
+        Hsv _hsvLowBound = new Hsv(0, 35, 30);
+        Hsv _hsvUpBound = new Hsv(30, 255, 255);
 
         public 
 
@@ -22,35 +22,35 @@ namespace TabletCamStreamer
         Mat dilateElm = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new System.Drawing.Size(3, 3), new System.Drawing.Point(-1, -1));
         Mat erodeElm = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new System.Drawing.Size(3, 3), new System.Drawing.Point(-1, -1));
 
-        public double LowerSkinHue
+        public double LowerHue
         {
-            get => _hsvSkinLowBound.Hue;
-            set => _hsvSkinLowBound.Hue = value;
+            get => _hsvLowBound.Hue;
+            set => _hsvLowBound.Hue = value;
         }
-        public double LowerSkinSaturation
+        public double LowerSaturation
         {
-            get => _hsvSkinLowBound.Satuation;
-            set => _hsvSkinLowBound.Satuation = value;
+            get => _hsvLowBound.Satuation;
+            set => _hsvLowBound.Satuation = value;
         }
-        public double LowerSkinValue
+        public double LowerValue
         {
-            get => _hsvSkinLowBound.Value;
-            set => _hsvSkinLowBound.Value = value;
+            get => _hsvLowBound.Value;
+            set => _hsvLowBound.Value = value;
         }
-        public double UpperSkinHue
+        public double UpperHue
         {
-            get => _hsvSkinUpBound.Hue;
-            set => _hsvSkinUpBound.Hue = value;
+            get => _hsvUpBound.Hue;
+            set => _hsvUpBound.Hue = value;
         }
-        public double UpperSkinSaturation
+        public double UpperSaturation
         {
-            get => _hsvSkinUpBound.Satuation;
-            set => _hsvSkinUpBound.Satuation = value;
+            get => _hsvUpBound.Satuation;
+            set => _hsvUpBound.Satuation = value;
         }
-        public double UpperSkinValue
+        public double UpperValue
         {
-            get => _hsvSkinUpBound.Value;
-            set => _hsvSkinUpBound.Value = value;
+            get => _hsvUpBound.Value;
+            set => _hsvUpBound.Value = value;
         }
         /*const int SAMPLE_SIZE = 100;
         Hsv[] sampleFrameColors = new Hsv[SAMPLE_SIZE];
@@ -60,14 +60,14 @@ namespace TabletCamStreamer
         {
             //sampleFrameCount = 0;
         }
-        public void initSkinBoundaris(double hueLow,double hueUp,double satLow,double satUp,double valLow,double valUp)
+        public void initSegmentationColorBoundaries(double hueLow,double hueUp,double satLow,double satUp,double valLow,double valUp)
         {
-            LowerSkinHue = hueLow;
-            UpperSkinHue = hueUp;
-            LowerSkinSaturation = satLow;
-            UpperSkinSaturation = satUp;
-            LowerSkinValue = valLow;
-            UpperSkinValue = valUp;
+            LowerHue = hueLow;
+            UpperHue = hueUp;
+            LowerSaturation = satLow;
+            UpperSaturation = satUp;
+            LowerValue = valLow;
+            UpperValue = valUp;
         }
         public Mat extractSkinPart(Mat srcImg)
         {
@@ -118,12 +118,12 @@ namespace TabletCamStreamer
             Image<Ycc, byte> yccSrc = rgbaSrc.Convert<Ycc, byte>();
             InitMatsIfNeeded(rgbaSrc);
             //skinMask = hsvSrc.InRange(chromakeyLow, chromakeyUp);
-            skinMask = hsvSrc.InRange(_hsvSkinLowBound, _hsvSkinUpBound);
-            //skinMask = skinMask.Not();
+            skinMask = hsvSrc.InRange(_hsvLowBound, _hsvUpBound);
+            skinMask = skinMask.Not();
             //skinMask = yccSrc.InRange(yccLowBound, yccUpBound);
             //skinMask = skinMask.Dilate(1);
             CvInvoke.Dilate(skinMask, skinMask, dilateElm, new System.Drawing.Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar());
-            CvInvoke.Erode(skinMask, skinMask, erodeElm, new System.Drawing.Point(-1, -1), 2, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar());
+            CvInvoke.Erode(skinMask, skinMask, erodeElm, new System.Drawing.Point(-1, -1), 3, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar());
             //skinMask = skinMask.Erode(1);
             CvInvoke.GaussianBlur(skinMask, skinMask, new System.Drawing.Size(5, 5), 1, 1);
             extraction.SetValue(new Bgra(0, 0, 0, 0));

@@ -15,8 +15,8 @@
 		</Grid.ColumnDefinitions>
 		<Grid x:Name="previewContainer" Grid.Column="0">
 			<Grid.RowDefinitions>
-				<RowDefinition Height="0.9*"></RowDefinition>
-				<RowDefinition Height="0.1*"></RowDefinition>
+				<RowDefinition Height="0.95*"></RowDefinition>
+				<RowDefinition Height="0.05*"></RowDefinition>
 			</Grid.RowDefinitions>
 			<Image x:Name="imFramePreview" Grid.Row="0"
                Stretch="Uniform"
@@ -49,9 +49,9 @@
 						<ColumnDefinition Width="0.3*"></ColumnDefinition>
 						<ColumnDefinition Width="0.4*"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
-					<Button x:Name="btnOk" Grid.Column="0" Click="btnOk_Click" Margin="2 2 2 2">Save</Button>
+					<Button x:Name="btnOk" Grid.Column="2" Click="btnOk_Click" Margin="2 2 2 2">Save Crop Area</Button>
 					<Button x:Name="btnCancel" Grid.Column="1" Click="btnCancel_Click" Margin="2 2 2 2">Cancel</Button>
-					<Button x:Name="btnResetCrop" Grid.Column="2" Click="btnResetCrop_Click" Margin="2 2 2 2">Reset Crop Area</Button>
+					<Button x:Name="btnResetCrop" Grid.Column="0" Click="btnResetCrop_Click" Margin="2 2 2 2">Reset Crop Area</Button>
 				</Grid>
 			</Grid>
 		</Grid>
@@ -71,7 +71,13 @@
 			</Grid.RowDefinitions>
 			<CheckBox x:Name="cbEnableImgProc" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
 					  Foreground="White" VerticalAlignment="Center" Margin="5"
-                      Checked="CbEnableImgProc_CheckChanged" Unchecked="CbEnableImgProc_CheckChanged">Enable Skin Segmentation</CheckBox>
+                      Checked="CbEnableImgProc_CheckChanged" Unchecked="CbEnableImgProc_CheckChanged">
+				<TextBlock>
+					<Run Text="Enable background removal"/>
+					<LineBreak/>
+					<Run Text="Adjust background color below"/>	
+				</TextBlock>
+			</CheckBox>
 			<Label Grid.Column="0" Grid.Row="1" Foreground="White" VerticalAlignment="Center" Margin="3">Hue</Label>
 			<Grid Grid.Column="1" Grid.Row="1">
 				<Grid.ColumnDefinitions>
@@ -89,7 +95,7 @@
 				<Label x:Name="lblhueSliderRange" Foreground="White" Grid.Column="1" Grid.Row="0">From 0 to 30</Label>
 				<AvalonControls:RangeSlider x:Name="hueSlider" Grid.Column="1" Grid.Row="1" Margin="2 0 2 0"
 										RangeStart="0" RangeStop="180" MinRange="0"
-										RangeStartSelected="0" RangeStopSelected="30"
+										RangeStartSelected="80" RangeStopSelected="132"
 										RangeSelectionChanged="hueSlider_RangeSelectionChanged"></AvalonControls:RangeSlider>
 			</Grid>
 			
@@ -110,7 +116,7 @@
 				<Label x:Name="lblSatSliderRange" Foreground="White" Grid.Column="1" Grid.Row="0">From 35 to 255</Label>
 				<AvalonControls:RangeSlider x:Name="satSlider" Grid.Column="1" Grid.Row="1" Margin="2 0 2 0"
 										RangeStart="0" RangeStop="255" MinRange="0"
-										RangeStartSelected="35" RangeStopSelected="255"
+										RangeStartSelected="0" RangeStopSelected="255"
 										RangeSelectionChanged="SatSlider_RangeSelectionChanged"></AvalonControls:RangeSlider>
 			</Grid>
 			
@@ -131,7 +137,7 @@
 				<Label x:Name="lblValSliderRange" Foreground="White" Grid.Column="1" Grid.Row="0">From 30 to 255</Label>
                 <AvalonControls:RangeSlider x:Name="valSlider" Grid.Column="1" Grid.Row="1" Margin="2 0 2 0"
 										RangeStart="0" RangeStop="255" MinRange="0"
-										RangeStartSelected="35" RangeStopSelected="255"
+										RangeStartSelected="0" RangeStopSelected="255"
 										RangeSelectionChanged="ValSlider_RangeSelectionChanged"></AvalonControls:RangeSlider>
             </Grid>
             <Rectangle x:Name="imgProcDisabler"
