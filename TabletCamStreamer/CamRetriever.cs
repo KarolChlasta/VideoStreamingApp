@@ -155,6 +155,7 @@ namespace TabletCamStreamer
                         if (_skinExtractor != null)
                         {
                             extractedFrame = _skinExtractor.extractSkinPart(extractedFrame);
+                            //extractedFrame = _skinExtractor.extractSkinPartUsingContours(extractedFrame);
                         }
                     }
                     Bitmap bmp = extractedFrame.Bitmap;

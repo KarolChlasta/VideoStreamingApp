@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 
 namespace TabletCamStreamer
 {
@@ -16,7 +17,8 @@ namespace TabletCamStreamer
         public 
 
         Ycc yccLowBound = new Ycc(5, 123, 60);
-        Ycc yccUpBound = new Ycc(255, 180, 120); 
+        Ycc yccUpBound = new Ycc(255, 180, 120);
+        Image<Gray, byte> cannyImg = null;
         Image<Bgra, byte> extraction = null;
         Image<Gray, byte> skinMask = null;
         Mat dilateElm = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new System.Drawing.Size(3, 3), new System.Drawing.Point(-1, -1));
@@ -68,6 +70,31 @@ namespace TabletCamStreamer
             UpperSaturation = satUp;
             LowerValue = valLow;
             UpperValue = valUp;
+        }
+        public Mat extractSkinPartUsingContours(Mat srcImg)
+        {
+            Image<Bgra, byte> rgbaSrc = srcImg.ToImage<Bgra, byte>();
+            Image<Hsv, byte> hsvSrc = rgbaSrc.Convert<Hsv, byte>();
+            extraction = rgbaSrc.Clone();
+            cannyImg = hsvSrc.Canny(200, 50);
+            using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
+            {
+                CvInvoke.FindContours(cannyImg, contours, null, Emgu.CV.CvEnum.RetrType.Ccomp, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+                double maxContourArea = 0;
+                int maxCountourIdx = -1;
+                for(int i=0; i< contours.Size; i++)
+                {
+                    VectorOfPoint contour = contours[i];
+                    VectorOfPoint approxedContour = new VectorOfPoint();
+                    double contourArea = CvInvoke.ContourArea(contour);
+                    double periphery = CvInvoke.ArcLength(contour, true);
+                    CvInvoke.ApproxPolyDP(contour, approxedContour, periphery * 0.02, true);
+                    VectorOfVectorOfPoint approxedContourList = new VectorOfVectorOfPoint();
+                    approxedContourList.Push(approxedContour);
+                    CvInvoke.DrawContours(extraction, approxedContourList, 0, new MCvScalar(255, 255, 255, 255), -1);
+                }
+            }
+            return extraction.Mat;
         }
         public Mat extractSkinPart(Mat srcImg)
         {
@@ -124,11 +151,32 @@ namespace TabletCamStreamer
             //skinMask = skinMask.Dilate(1);
             CvInvoke.Dilate(skinMask, skinMask, dilateElm, new System.Drawing.Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar());
             CvInvoke.Erode(skinMask, skinMask, erodeElm, new System.Drawing.Point(-1, -1), 3, Emgu.CV.CvEnum.BorderType.Constant, new MCvScalar());
+            skinMask = fillHolesInBinaryImage(skinMask);
             //skinMask = skinMask.Erode(1);
             CvInvoke.GaussianBlur(skinMask, skinMask, new System.Drawing.Size(5, 5), 1, 1);
             extraction.SetValue(new Bgra(0, 0, 0, 0));
             rgbaSrc.Copy(extraction, skinMask);
             return extraction.Mat;
+        }
+        Image<Gray, byte> fillHolesInBinaryImage(Image<Gray,byte> srcBinaryImg)
+        {
+            VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+            CvInvoke.FindContours(srcBinaryImg, contours, null, Emgu.CV.CvEnum.RetrType.List, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+            double tooSmall = srcBinaryImg.Width * srcBinaryImg.Height * 0.1;
+            for(int idx=0; idx < contours.Size; idx++)
+            {
+                VectorOfPoint contour = contours[idx];
+                VectorOfPoint approxContour = new VectorOfPoint();
+                double contourLength = CvInvoke.ArcLength(contour, true);
+                CvInvoke.ApproxPolyDP(contour, approxContour, 0.02 * contourLength, true);
+                if(CvInvoke.ContourArea(approxContour)<tooSmall)
+                {
+                    VectorOfVectorOfPoint approxContourList = new VectorOfVectorOfPoint();
+                    approxContourList.Push(approxContour);
+                    CvInvoke.DrawContours(srcBinaryImg, approxContourList, 0, new MCvScalar(255, 255, 255, 255), -1);
+                }
+            }
+            return srcBinaryImg;
         }
         void InitMatsIfNeeded(Image<Bgra, byte> src)
         {
