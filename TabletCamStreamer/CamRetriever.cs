@@ -159,6 +159,7 @@ namespace TabletCamStreamer
                         }
                     }
                     Bitmap bmp = extractedFrame.Bitmap;
+                    //Bitmap downscaledbmp = Utilities.DownScaleBitmap(bmp, 4);
                     /*if (CropArea != null)
                     {
                         bmp = Utilities.CropBitmap(bmp, CropArea.Left, CropArea.Top, CropArea.Width, CropArea.Height);

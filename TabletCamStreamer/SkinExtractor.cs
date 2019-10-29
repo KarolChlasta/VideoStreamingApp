@@ -162,7 +162,7 @@ namespace TabletCamStreamer
         {
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
             CvInvoke.FindContours(srcBinaryImg, contours, null, Emgu.CV.CvEnum.RetrType.List, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
-            double tooSmall = srcBinaryImg.Width * srcBinaryImg.Height * 0.1;
+            double tooSmall = srcBinaryImg.Width * srcBinaryImg.Height * 0.02;
             for(int idx=0; idx < contours.Size; idx++)
             {
                 VectorOfPoint contour = contours[idx];

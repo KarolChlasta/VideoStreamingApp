@@ -88,12 +88,12 @@ namespace TabletCamStreamer
             switchMode(ViewerMode.NORMAL);
             _mainCamRetriever.RoiExtractor = new ImageROIExtractor();
             int dstW = initDstFrameW;
-            if (string.IsNullOrEmpty(tbDstWidth.Text) || string.IsNullOrWhiteSpace(tbDstWidth.Text))
+            if (!string.IsNullOrEmpty(tbDstWidth.Text) || !string.IsNullOrWhiteSpace(tbDstWidth.Text))
             {
                  Int32.TryParse(tbDstWidth.Text,out dstW);
             }
             int dstH = initDstFrameH;
-            if (string.IsNullOrEmpty(tbDstHeight.Text) || string.IsNullOrWhiteSpace(tbDstHeight.Text))
+            if (!string.IsNullOrEmpty(tbDstHeight.Text) || !string.IsNullOrWhiteSpace(tbDstHeight.Text))
             {
                  Int32.TryParse(tbDstHeight.Text,out dstH);
             }
